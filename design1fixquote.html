@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Sip&Site — Curated Hospitality Real Estate & Location Intelligence</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+
+  <style>
+    .animate-on-scroll-hidden {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .animate-on-scroll-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.5em);
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out;
+    }
+
+    .letter.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <style type="text/tailwindcss">
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+      body {
+        @apply bg-neutral-background text-text-primary;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #F4EFE6;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #C89A5A;
+        border-radius: 999px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #B5762A;
+      }
+
+      select option {
+        color: #1E1810;
+        background: #FFFFFF;
+      }
+    }
+
+    .nav-glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(181, 118, 42, 0.16);
+      box-shadow: 0 10px 30px rgba(125, 86, 33, 0.08);
+    }
+
+    .soft-panel {
+      background: #FFFFFF;
+      border: 1px solid rgba(181, 118, 42, 0.14);
+      box-shadow: 0 12px 35px rgba(80, 55, 22, 0.06);
+    }
+
+    .warm-divider {
+      background: rgba(181, 118, 42, 0.22);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      important: '#app-root',
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#B5762A',
+            'brand-secondary': '#8E6330',
+            'neutral-background': '#FAF7F2',
+            'neutral-surface': '#F4EFE6',
+            'neutral-surface-2': '#EDE6D8',
+            'card-background': '#FFFFFF',
+            'text-primary': '#1E1810',
+            'text-secondary': '#5C4A36',
+            'text-onPrimary': '#FFFFFF',
+            'border-dim': 'rgba(181, 118, 42, 0.18)',
+            'border-strong': 'rgba(181, 118, 42, 0.35)',
+          },
+          fontFamily: {
+            'primary': ['Roboto Condensed', 'sans-serif'],
+            'secondary': ['Roboto Condensed', 'sans-serif'],
+          },
+          letterSpacing: {
+            'huge': '-0.06em',
+            'tight-heading': '-1.3px',
+          },
+          fontSize: {
+            'huge': ['clamp(2.5rem, 12vw, 9.5rem)', '0.85'],
+            'display': ['clamp(2rem, 5vw, 4rem)', '1'],
+          },
+          spacing: {
+            '128': '32rem',
+            '160': '40rem',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body id="app-root">
+  <div class="font-secondary bg-neutral-background text-text-primary min-h-screen flex flex-col w-full relative">
+    <header class="w-full flex justify-center pt-12 pb-6 md:py-8 px-4 overflow-hidden">
+      <a href="design1.html">
+        <h1 id="logo-text" class="font-primary font-semibold text-huge uppercase tracking-huge text-center select-none break-normal w-full max-w-full text-text-primary">
+          SIP&SITE
+        </h1>
+      </a>
+    </header>
+
+    <main class="flex-grow">
+      <nav class="sticky top-4 md:top-5 z-50 w-full flex justify-center px-4 mb-16 md:mb-24 pointer-events-none">
+        <div class="flex items-center gap-1 md:gap-2 nav-glass p-1.5 md:px-3 md:py-2 rounded-full pointer-events-auto max-w-[95vw] overflow-x-auto no-scrollbar">
+          <a href="design1fix.html" class="whitespace-nowrap px-4 md:px-5 py-2 text-text-primary border border-[rgba(181,118,42,0.22)] rounded-full text-[11px] md:text-sm font-medium hover:bg-brand-primary hover:text-white transition-all duration-300">
+            ← Back Home
+          </a>
+        </div>
+      </nav>
+
+      <section id="contact" class="max-w-7xl mx-auto px-5 mb-40">
+        <div class="text-center mb-24" data-animation-on-scroll>
+          <span class="text-xs uppercase tracking-[0.3em] text-brand-secondary block mb-6">Service Inquiry</span>
+          <h2 class="text-display font-semibold uppercase tracking-huge mb-8 text-text-primary">
+            Site Quote <br>& Advisory Request
+          </h2>
+          <p class="text-text-secondary text-xl max-w-2xl mx-auto">
+            Provide your concept details below. Our analysts will prepare a preliminary site selection brief and service quote.
+          </p>
+          <div class="mt-10 h-px w-24 mx-auto warm-divider"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+          <div data-animation-on-scroll>
+            <form class="space-y-12 soft-panel rounded-2xl p-8 md:p-10" id="quote-form">
+              <div class="group border-b border-border-dim focus-within:border-brand-primary transition-colors py-4">
+                <label class="block text-xs uppercase tracking-widest text-brand-secondary mb-2">Owner / Lead Name</label>
+                <input
+                  type="text"
+                  required
+                  class="w-full bg-transparent border-none outline-none text-xl p-0 focus:ring-0 text-text-primary placeholder-[#8B7355] placeholder-opacity-70"
+                  placeholder="Julian Vane"
+                >
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="group border-b border-border-dim focus-within:border-brand-primary transition-colors py-4">
+                  <label class="block text-xs uppercase tracking-widest text-brand-secondary mb-2">Business Type</label>
+                  <select class="w-full bg-transparent border-none outline-none text-xl p-0 focus:ring-0 appearance-none text-text-primary">
+                    <option>Fine Dining Restaurant</option>
+                    <option>Casual Dining</option>
+                    <option>Specialty Cafe</option>
+                    <option>Cocktail Bar / Lounge</option>
+                    <option>Bistro</option>
+                  </select>
+                </div>
+
+                <div class="group border-b border-border-dim focus-within:border-brand-primary transition-colors py-4">
+                  <label class="block text-xs uppercase tracking-widest text-brand-secondary mb-2">Target City / District</label>
+                  <input
+                    type="text"
+                    required
+                    class="w-full bg-transparent border-none outline-none text-xl p-0 focus:ring-0 text-text-primary placeholder-[#8B7355] placeholder-opacity-70"
+                    placeholder="e.g. Surry Hills, Sydney"
+                  >
+                </div>
+              </div>
+
+              <div class="group border-b border-border-dim focus-within:border-brand-primary transition-colors py-4">
+                <label class="block text-xs uppercase tracking-widest text-brand-secondary mb-2">Investment Range (Real Estate)</label>
+                <input
+                  type="text"
+                  class="w-full bg-transparent border-none outline-none text-xl p-0 focus:ring-0 text-text-primary placeholder-[#8B7355] placeholder-opacity-70"
+                  placeholder="$250k — $1.5M"
+                >
+              </div>
+
+              <div class="group border-b border-border-dim focus-within:border-brand-primary transition-colors py-4">
+                <label class="block text-xs uppercase tracking-widest text-brand-secondary mb-2">Project Vision / Concept Details</label>
+                <textarea
+                  rows="3"
+                  class="w-full bg-transparent border-none outline-none text-xl p-0 focus:ring-0 text-text-primary placeholder-[#8B7355] placeholder-opacity-70 resize-none"
+                  placeholder="Describe the atmosphere, scale, customer, and requirements..."
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full py-6 bg-brand-primary text-white text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all flex justify-between items-center px-8 rounded-full shadow-md"
+              >
+                <span>Submit Quote Request</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </form>
+          </div>
+
+          <div class="space-y-12" data-animation-on-scroll>
+            <div class="soft-panel rounded-2xl p-8">
+              <h4 class="text-xs uppercase tracking-[0.3em] text-brand-primary mb-6">Quote Process</h4>
+              <ul class="space-y-6">
+                <li class="flex gap-4">
+                  <span class="text-brand-secondary italic">01.</span>
+                  <p class="text-sm text-text-primary">Submission reviewed by a local district specialist within 24 hours.</p>
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-brand-secondary italic">02.</span>
+                  <p class="text-sm text-text-primary">Initial site availability heatmap generated for your target area.</p>
+                </li>
+                <li class="flex gap-4">
+                  <span class="text-brand-secondary italic">03.</span>
+                  <p class="text-sm text-text-primary">Consultation scheduled to finalize search criteria and advisory fees.</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="soft-panel rounded-2xl p-8">
+              <h4 class="text-xs uppercase tracking-[0.3em] text-brand-secondary mb-4">Urgent Inquiries</h4>
+              <p class="text-2xl font-light text-text-primary hover:text-brand-primary transition-colors cursor-pointer">
+                concierge@sipandsite.com
+              </p>
+              <p class="text-2xl font-light mt-2 text-text-primary">
+                +44 (0) 203 123 4567
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="max-w-7xl mx-auto px-5 mb-32">
+        <div class="bg-neutral-surface rounded-2xl border border-border-dim p-10 md:p-14 text-center" data-animation-on-scroll>
+          <h3 class="text-3xl md:text-4xl font-semibold uppercase tracking-tight-heading text-text-primary mb-4">
+            Designed for serious hospitality founders
+          </h3>
+          <p class="text-text-secondary text-lg max-w-3xl mx-auto">
+            From cafés and restaurants to cocktail bars, we help identify high-potential locations with stronger visibility, better demand alignment, and long-term growth potential.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-neutral-surface border-t border-border-dim py-20 px-5">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div class="md:col-span-2 space-y-6">
+            <h2 class="text-3xl font-semibold uppercase tracking-tighter text-text-primary">SIP&SITE ADVISORY</h2>
+            <p class="text-text-secondary text-lg max-w-sm">
+              Strategic site selection and demographic intelligence for the world's most ambitious hospitality concepts.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Explore</h3>
+            <ul class="space-y-2">
+              <li><a href="design1fix.html" class="hover:text-brand-primary transition-colors">Home</a></li>
+              <li><a href="design1fix.html#intelligence" class="hover:text-brand-primary transition-colors">Intelligence</a></li>
+              <li><a href="design1fix.html#curated" class="hover:text-brand-primary transition-colors">Curated Sites</a></li>
+              <li><a href="design1fixquote.html" class="hover:text-brand-primary transition-colors font-bold text-brand-primary">Get a Quote</a></li>
+            </ul>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Global Hubs</h3>
+            <ul class="space-y-2 text-text-secondary">
+              <li>London — Mayfair</li>
+              <li>New York — Tribeca</li>
+              <li>Dubai — DIFC</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-20 pt-8 border-t border-border-dim flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary uppercase tracking-widest">
+          <p>© 2025 SIP&SITE. ALL RIGHTS RESERVED.</p>
+          <p>BUILT FOR VISIONARIES.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('quote-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const btn = form.querySelector('button');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<span>Processing Request...</span>';
+          btn.disabled = true;
+
+          setTimeout(() => {
+            btn.innerHTML = '<span>Request Sent Successfully</span>';
+            form.reset();
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }, 4000);
+          }, 1500);
+        });
+      }
+
+      const logo = document.getElementById('logo-text');
+      if (logo) {
+        const text = logo.textContent.trim();
+        logo.textContent = '';
+        [...text].forEach((char, i) => {
+          const span = document.createElement('span');
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          span.classList.add('letter');
+          span.style.transitionDelay = `${i * 0.08}s`;
+          logo.appendChild(span);
+          requestAnimationFrame(() => {
+            setTimeout(() => span.classList.add('visible'), 100);
+          });
+        });
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-on-scroll-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('[data-animation-on-scroll]').forEach(el => {
+        el.classList.add('animate-on-scroll-hidden');
+        observer.observe(el);
+      });
+    });
+  </script>
+
+  <script src="https://api.landinghero.ai/public/assistant-widget.js" data-lh-assistant-widget="true" data-project-id="2BI5i0N1nANJ1J9lqiFp"></script>
+</body>
+</html>

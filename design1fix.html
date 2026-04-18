@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Sip&Site — Curated Hospitality Real Estate & Location Intelligence</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+
+  <style>
+    .animate-on-scroll-hidden {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .animate-on-scroll-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.5em);
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out;
+    }
+
+    .letter.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  <style type="text/tailwindcss">
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+      body {
+        @apply bg-neutral-background text-text-primary;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #F4EFE6;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #C89A5A;
+        border-radius: 999px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #B5762A;
+      }
+    }
+
+    .nav-glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(181, 118, 42, 0.16);
+      box-shadow: 0 10px 30px rgba(125, 86, 33, 0.08);
+    }
+
+    .lux-card {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(181, 118, 42, 0.18);
+      box-shadow: 0 18px 50px rgba(80, 55, 22, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .soft-panel {
+      background: #FFFFFF;
+      border: 1px solid rgba(181, 118, 42, 0.14);
+      box-shadow: 0 12px 35px rgba(80, 55, 22, 0.06);
+    }
+
+    .warm-divider {
+      background: rgba(181, 118, 42, 0.22);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes slow-pan {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+
+    .animate-slow-pan {
+      animation: slow-pan 20s ease-in-out infinite alternate;
+    }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      important: '#app-root',
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#B5762A',
+            'brand-secondary': '#8E6330',
+            'neutral-background': '#FAF7F2',
+            'neutral-surface': '#F4EFE6',
+            'neutral-surface-2': '#EDE6D8',
+            'card-background': '#FFFFFF',
+            'text-primary': '#1E1810',
+            'text-secondary': '#5C4A36',
+            'text-onPrimary': '#FFFFFF',
+            'border-dim': 'rgba(181, 118, 42, 0.18)',
+            'border-strong': 'rgba(181, 118, 42, 0.35)',
+          },
+          fontFamily: {
+            'primary': ['Roboto Condensed', 'sans-serif'],
+            'secondary': ['Roboto Condensed', 'sans-serif'],
+          },
+          letterSpacing: {
+            'huge': '-0.06em',
+            'tight-heading': '-1.3px',
+          },
+          fontSize: {
+            'huge': ['clamp(2.5rem, 12vw, 9.5rem)', '0.85'],
+            'display': ['clamp(2rem, 5vw, 4rem)', '1'],
+          },
+          spacing: {
+            '128': '32rem',
+            '160': '40rem',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body id="app-root">
+  <div class="font-secondary bg-neutral-background text-text-primary min-h-screen flex flex-col w-full relative">
+    <header class="w-full flex justify-center pt-12 pb-6 md:py-8 px-4 overflow-hidden">
+      <a href="design1.html">
+        <h1 id="logo-text" class="font-primary font-semibold text-huge uppercase tracking-huge text-center select-none break-normal w-full max-w-full text-text-primary">
+          SIP&SITE
+        </h1>
+      </a>
+    </header>
+
+    <main class="flex-grow">
+      <nav class="sticky top-4 md:top-5 z-50 w-full flex justify-center px-4 mb-16 md:mb-24 pointer-events-none">
+        <div class="flex items-center gap-1 md:gap-2 nav-glass p-1.5 md:px-3 md:py-2 rounded-full pointer-events-auto max-w-[95vw] overflow-x-auto no-scrollbar">
+          <a href="#" class="whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Overview</a>
+          <a href="#intelligence" class="whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Intelligence</a>
+          <a href="#curated" class="whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Sites</a>
+          <a href="design1fixquote.html" class="whitespace-nowrap px-4 md:px-5 py-2 bg-brand-primary text-white rounded-full text-[11px] md:text-sm font-bold hover:opacity-90 transition-all duration-300 shadow-md">Request Quote</a>
+        </div>
+      </nav>
+
+      <section class="max-w-7xl mx-auto px-5 mb-24 md:mb-40">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div class="hidden lg:block"></div>
+          <div data-animation-on-scroll>
+            <span class="text-xs uppercase tracking-[0.3em] text-brand-secondary block mb-6">Manifesto</span>
+            <p class="text-3xl md:text-5xl leading-[1.1] font-normal text-text-primary tracking-tight-heading">
+              The location of your business is its destiny. We curate the sites where culinary legacies are born.
+            </p>
+            <div class="mt-12 h-px w-24 warm-divider"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="w-full h-[70vh] md:h-screen relative overflow-hidden mb-24 md:mb-40">
+        <img src="https://images.pexels.com/photos/11042570/pexels-photo-11042570.jpeg?w=1920&h=1080&fit=crop" alt="Metropolitan Hospitality District" class="w-full h-full object-cover animate-slow-pan">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#1E1810]/55 via-[#1E1810]/25 to-transparent"></div>
+
+        <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 max-w-2xl" data-animation-on-scroll>
+          <h2 class="text-display font-semibold uppercase tracking-huge text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
+            Visionary <br>Placement
+          </h2>
+          <p class="text-lg md:text-xl text-[#F6EEDF] mt-2 md:mt-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
+            Securing prime real estate for Restaurants, Cafes, and Bars.
+          </p>
+        </div>
+      </section>
+
+      <section id="intelligence" class="bg-neutral-surface py-24 md:py-40 mb-24 md:mb-40">
+        <div class="max-w-7xl mx-auto px-5">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div data-animation-on-scroll>
+              <h2 class="text-display font-semibold uppercase tracking-huge mb-10 text-text-primary">
+                Site Selection <br>Intelligence
+              </h2>
+
+              <div class="space-y-8">
+                <div class="flex gap-6">
+                  <span class="text-brand-primary font-medium">01</span>
+                  <div>
+                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Footfall Analytics</h4>
+                    <p class="text-text-secondary">We analyze pedestrian patterns and demographic heatmaps to ensure your concept meets its ideal audience.</p>
+                  </div>
+                </div>
+
+                <div class="flex gap-6">
+                  <span class="text-brand-primary font-medium">02</span>
+                  <div>
+                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Concept Mapping</h4>
+                    <p class="text-text-secondary">Evaluating local competition and market saturation to find the "white space" for your specific offering.</p>
+                  </div>
+                </div>
+
+                <div class="flex gap-6">
+                  <span class="text-brand-primary font-medium">03</span>
+                  <div>
+                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Lease Strategy</h4>
+                    <p class="text-text-secondary">Leveraging our network of landlords to secure off-market opportunities and favorable long-term terms.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative group" data-animation-on-scroll>
+              <div class="absolute -inset-4 border border-[rgba(181,118,42,0.18)] scale-95 group-hover:scale-100 transition-transform duration-1000 rounded-xl"></div>
+              <img src="https://images.pexels.com/photos/18069520/pexels-photo-18069520.png?w=1000&h=1200&fit=crop" alt="Hospitality Intelligence Visual" class="w-full relative z-10 rounded-xl shadow-[0_20px_60px_rgba(80,55,22,0.12)]">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="curated" class="max-w-7xl mx-auto px-5 mb-24 md:mb-40">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+          <h2 class="text-display font-semibold uppercase tracking-huge text-text-primary" data-animation-on-scroll>
+            Curated <br>Portfolio
+          </h2>
+          <p class="text-text-secondary text-right max-w-xs uppercase tracking-widest text-xs leading-loose" data-animation-on-scroll>
+            A selective showcase of prime locations currently under our management or successfully placed.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16 md:gap-y-32">
+          <div class="group block space-y-6" data-animation-on-scroll>
+            <div class="relative overflow-hidden aspect-[4/5] rounded-xl">
+              <img src="https://images.pexels.com/photos/15049185/pexels-photo-15049185.jpeg?w=1200&h=1500&fit=crop" alt="The Mayfair Corner" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+              <div class="absolute inset-0 bg-[#1E1810] bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-700"></div>
+            </div>
+
+            <div class="flex justify-between items-start border-b border-border-dim pb-6">
+              <div>
+                <h3 class="text-2xl font-medium text-text-primary uppercase tracking-tight">The Mayfair Corner</h3>
+                <p class="text-text-secondary text-sm uppercase tracking-widest mt-1">Premium Restaurant Site — London</p>
+              </div>
+              <span class="text-sm font-medium border border-[rgba(181,118,42,0.28)] bg-white text-brand-primary px-3 py-1 rounded-full group-hover:bg-brand-primary group-hover:text-white transition-colors">LEASED</span>
+            </div>
+          </div>
+
+          <div class="group block space-y-6 mt-0 md:mt-24" data-animation-on-scroll>
+            <div class="relative overflow-hidden aspect-[4/5] rounded-xl">
+              <img src="https://images.pexels.com/photos/17064138/pexels-photo-17064138.jpeg?w=1200&h=1500&fit=crop" alt="Brick & Beam" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+              <div class="absolute inset-0 bg-[#1E1810] bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-700"></div>
+            </div>
+
+            <div class="flex justify-between items-start border-b border-border-dim pb-6">
+              <div>
+                <h3 class="text-2xl font-medium text-text-primary uppercase tracking-tight">Brick & Beam</h3>
+                <p class="text-text-secondary text-sm uppercase tracking-widest mt-1">Flagship Cafe Site — Brooklyn</p>
+              </div>
+              <span class="text-sm font-medium border border-[rgba(181,118,42,0.28)] bg-white text-brand-primary px-3 py-1 rounded-full group-hover:bg-brand-primary group-hover:text-white transition-colors">AVAILABLE</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="max-w-7xl mx-auto px-5 mb-40 text-center">
+        <div class="py-24 border border-border-dim bg-card-background rounded-2xl shadow-[0_20px_60px_rgba(80,55,22,0.08)]" data-animation-on-scroll>
+          <h2 class="text-display font-semibold uppercase tracking-huge mb-8 text-text-primary">
+            Ready to Secure <br>Your Future?
+          </h2>
+          <p class="text-text-secondary text-xl max-w-2xl mx-auto mb-12">
+            Begin your site selection journey with a bespoke quote tailored to your business goals.
+          </p>
+          <a href="design1fixquote.html" class="inline-block py-6 px-16 bg-brand-primary text-white text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all rounded-full shadow-md">
+            Get Your Quote
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-neutral-surface border-t border-border-dim py-20 px-5">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div class="md:col-span-2 space-y-6">
+            <h2 class="text-3xl font-semibold uppercase tracking-tighter text-text-primary">SIP&SITE ADVISORY</h2>
+            <p class="text-text-secondary text-lg max-w-sm">
+              Strategic site selection and demographic intelligence for the world's most ambitious hospitality concepts.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Explore</h3>
+            <ul class="space-y-2">
+              <li><a href="design1fix.html" class="hover:text-brand-primary transition-colors">Home</a></li>
+              <li><a href="design1fix.html#intelligence" class="hover:text-brand-primary transition-colors">Intelligence</a></li>
+              <li><a href="design1fix.html#curated" class="hover:text-brand-primary transition-colors">Curated Sites</a></li>
+              <li><a href="design1fixquote.html" class="hover:text-brand-primary transition-colors font-bold text-brand-primary">Get a Quote</a></li>
+            </ul>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Global Hubs</h3>
+            <ul class="space-y-2 text-text-secondary">
+              <li>London — Mayfair</li>
+              <li>New York — Tribeca</li>
+              <li>Dubai — DIFC</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-20 pt-8 border-t border-border-dim flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary uppercase tracking-widest">
+          <p>© 2025 SIP&SITE. ALL RIGHTS RESERVED.</p>
+          <p>BUILT FOR VISIONARIES.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logo = document.getElementById('logo-text');
+      if (logo) {
+        const text = logo.textContent.trim();
+        logo.textContent = '';
+        [...text].forEach((char, i) => {
+          const span = document.createElement('span');
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          span.classList.add('letter');
+          span.style.transitionDelay = `${i * 0.08}s`;
+          logo.appendChild(span);
+          requestAnimationFrame(() => {
+            setTimeout(() => span.classList.add('visible'), 100);
+          });
+        });
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-on-scroll-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('[data-animation-on-scroll]').forEach(el => {
+        el.classList.add('animate-on-scroll-hidden');
+        observer.observe(el);
+      });
+    });
+  </script>
+
+  <script src="https://api.landinghero.ai/public/assistant-widget.js" data-lh-assistant-widget="true" data-project-id="2BI5i0N1nANJ1J9lqiFp"></script>
+</body>
+</html>
