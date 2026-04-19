@@ -39,21 +39,13 @@ NON_COMMERCIAL_IDS = {
 
 COMPLEMENTARY_MAP = {
     'Cafe, Coffee, and Tea House': [
-        'Office', 'Education', 'Gym and Studio', 'Fashion Retail', 'Health and Beauty Service',
+        'Office', 'Education', 'Fashion Retail', 'Health and Beauty Service',
     ],
     'Restaurant': [
         'Lodging', 'Bar', 'Performing Arts Venue', 'Fashion Retail', 'Movie Theater',
     ],
     'Bar': [
         'Restaurant', 'Lodging', 'Night Club', 'Office', 'Performing Arts Venue',
-    ],
-    'Gym and Studio': [
-        'Office', 'Cafe, Coffee, and Tea House', 'Food and Beverage Retail',
-        'Health and Beauty Service', 'Residential Building',
-    ],
-    'Bakery': [
-        'Cafe, Coffee, and Tea House', 'Office', 'Education',
-        'Food and Beverage Retail', 'Fashion Retail',
     ],
 }
 
@@ -79,7 +71,7 @@ RETAIL_LEVEL2 = {
 }
 
 FOOD_BEV_LEVEL2 = {
-    'Restaurant', 'Bar', 'Bakery', 'Dessert Shop', 'Cafe, Coffee, and Tea House',
+    'Restaurant', 'Bar', 'Dessert Shop', 'Cafe, Coffee, and Tea House',
 }
 
 # ---------------------------------------------------------------------------
@@ -467,7 +459,7 @@ def explain_hex(feature_row, all_features):
     if pct_complementary > 0.75:
         reasons.append(
             f"Strong complementary neighbours — "
-            f"{int(feature_row['complementary'])} offices/gyms/schools/shops nearby"
+            f"{int(feature_row['complementary'])} offices/schools/shops nearby"
         )
 
     if feature_row['competitors'] == 0:
@@ -748,11 +740,32 @@ def score_locations(
     # Load rental CSV once for result enrichment
     rental_df = pd.read_csv(RENTAL_CSV) if RENTAL_CSV.exists() else None
 
+    # Compute Sydney-wide distributions once for chart overlays
+    income_vals = feature_df['median_hhd_income_weekly'].dropna().values
+    inc_counts, inc_bins = np.histogram(income_vals, bins=15)
+    income_hist_data = {
+        "bins":   [round(float(b)) for b in inc_bins.tolist()],
+        "counts": [int(c) for c in inc_counts.tolist()],
+    }
+    density_vals = feature_df['pop_density'].dropna().values
+    den_counts, den_bins = np.histogram(density_vals, bins=15)
+    density_hist_data = {
+        "bins":   [round(float(b)) for b in den_bins.tolist()],
+        "counts": [int(c) for c in den_counts.tolist()],
+    }
+
     results = []
     for rank, (_, row) in enumerate(top.iterrows(), 1):
         hex_mask    = feature_df['h3'] == row['h3']
         feature_row = feature_df[hex_mask].iloc[0]
         reasons     = explain_hex(feature_row, feature_df)
+
+        # H3 hex boundary polygon for Leaflet map
+        try:
+            boundary_pts = h3.cell_to_boundary(str(feature_row['h3']))
+            hex_boundary = [[round(lat, 5), round(lon, 5)] for lat, lon in boundary_pts]
+        except Exception:
+            hex_boundary = []
 
         rental_info = None
         if rental_df is not None:
@@ -778,6 +791,7 @@ def score_locations(
             "reasons":     reasons,
             "rental":      rental_info,
             "vision_echo": vision or None,
+            "hex_boundary": hex_boundary,
             "stats": {
                 "foot_traffic":  int(feature_row['total_density']),
                 "competitors":   int(feature_row['competitors']),
@@ -788,6 +802,16 @@ def score_locations(
                                  if pd.notna(feature_row.get('pop_density')) else None,
                 "dist_rail_km":  round(float(feature_row['dist_rail_km']), 2)
                                  if pd.notna(feature_row.get('dist_rail_km')) else None,
+            },
+            "income_distribution": {
+                **income_hist_data,
+                "location_value": int(feature_row['median_hhd_income_weekly'])
+                                  if pd.notna(feature_row.get('median_hhd_income_weekly')) else None,
+            },
+            "pop_distribution": {
+                **density_hist_data,
+                "location_value": int(feature_row['pop_density'])
+                                  if pd.notna(feature_row.get('pop_density')) else None,
             },
         })
 
