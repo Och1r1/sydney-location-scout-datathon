@@ -7,89 +7,72 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     .animate-on-scroll-hidden {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 1.2s cubic-bezier(0.16,1,0.3,1), transform 1.2s cubic-bezier(0.16,1,0.3,1);
     }
-    .animate-on-scroll-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .animate-on-scroll-visible { opacity: 1; transform: translateY(0); }
     .letter {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(0.5em);
-      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out;
+      display: inline-block; opacity: 0; transform: translateY(0.5em);
+      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1), opacity 0.8s ease-out;
     }
-    .letter.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .letter.visible { opacity: 1; transform: translateY(0); }
+
+    /* Modal */
+    #detail-modal {
+      transition: opacity 0.2s ease;
     }
-  </style>
+    #detail-modal.hidden { pointer-events: none; opacity: 0; }
+    #modal-inner {
+      transform: translateY(24px);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    #detail-modal:not(.hidden) #modal-inner { transform: translateY(0); }
 
-  <style type="text/tailwindcss">
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
+    .leaflet-container { z-index: 0 !important; border-radius: 0.75rem; }
 
-    @layer base {
-      body {
-        @apply bg-neutral-background text-text-primary;
+    .stat-pill {
+      background: #F4EFE6; border-radius: 0.75rem;
+      padding: 0.6rem 0.85rem; font-size: 0.75rem; color: #5C4A36;
+    }
+    .stat-pill strong { display: block; font-size: 1.05rem; color: #1E1810; margin-bottom: 1px; }
+
+    /* Card hover */
+    .location-card { transition: box-shadow 0.2s ease, transform 0.2s ease; }
+    .location-card:hover { box-shadow: 0 8px 32px rgba(181,118,42,0.14); transform: translateY(-2px); }
+
+    .result-card-image {
+      width: 9rem;
+      height: 9rem;
+    }
+
+    @media (min-width: 768px) {
+      .result-card-image {
+        width: 12rem;
+        height: 12rem;
       }
-      ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: #F4EFE6; }
-      ::-webkit-scrollbar-thumb { background: #C89A5A; border-radius: 999px; }
-      ::-webkit-scrollbar-thumb:hover { background: #B5762A; }
     }
-
-    .nav-glass {
-      backdrop-filter: blur(14px);
-      background: rgba(255, 255, 255, 0.62);
-      border: 1px solid rgba(181, 118, 42, 0.16);
-      box-shadow: 0 10px 30px rgba(125, 86, 33, 0.08);
-    }
-    .warm-divider {
-      background: rgba(181, 118, 42, 0.22);
-    }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 
-  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       important: '#app-root',
       theme: {
         extend: {
           colors: {
-            'brand-primary': '#B5762A',
-            'brand-secondary': '#8E6330',
-            'neutral-background': '#FAF7F2',
-            'neutral-surface': '#F4EFE6',
-            'neutral-surface-2': '#EDE6D8',
-            'card-background': '#FFFFFF',
-            'text-primary': '#1E1810',
-            'text-secondary': '#5C4A36',
-            'text-onPrimary': '#FFFFFF',
-            'border-dim': 'rgba(181, 118, 42, 0.18)',
-            'border-strong': 'rgba(181, 118, 42, 0.35)',
+            'brand-primary': '#B5762A', 'brand-secondary': '#8E6330',
+            'neutral-background': '#FAF7F2', 'neutral-surface': '#F4EFE6',
+            'card-background': '#FFFFFF', 'text-primary': '#1E1810',
+            'text-secondary': '#5C4A36', 'border-dim': 'rgba(181,118,42,0.18)',
           },
-          fontFamily: {
-            'primary': ['Roboto Condensed', 'sans-serif'],
-            'secondary': ['Roboto Condensed', 'sans-serif'],
-          },
-          letterSpacing: {
-            'huge': '-0.06em',
-            'tight-heading': '-1.3px',
-          },
-          fontSize: {
-            'huge': ['clamp(2.5rem, 12vw, 9.5rem)', '0.85'],
-            'display': ['clamp(2rem, 5vw, 4rem)', '1'],
-          }
+          fontFamily: { 'primary': ['Roboto Condensed','sans-serif'], 'secondary': ['Roboto Condensed','sans-serif'] },
+          letterSpacing: { 'huge': '-0.06em' },
+          fontSize: { 'huge': ['clamp(2.5rem,12vw,9.5rem)','0.85'], 'display': ['clamp(2rem,5vw,4rem)','1'] }
         }
       }
     }
@@ -97,245 +80,499 @@
 </head>
 
 <body id="app-root">
-  <div class="font-secondary bg-neutral-background text-text-primary min-h-screen flex flex-col w-full relative">
+<div class="font-secondary bg-neutral-background text-text-primary min-h-screen flex flex-col w-full relative">
 
-    <header class="w-full flex justify-center pt-12 pb-6 md:py-8 px-4 overflow-hidden">
-      <a href="design1fix.html">
-        <h1 id="logo-text" class="font-primary font-semibold text-huge uppercase tracking-huge text-center select-none break-normal w-full max-w-full text-text-primary">
-          SIP&SITE
-        </h1>
-      </a>
-    </header>
+  <header class="w-full flex justify-center pt-12 pb-6 md:py-8 px-4 overflow-hidden">
+    <a href="design1fix.html">
+      <h1 id="logo-text" class="font-primary font-semibold text-huge uppercase tracking-huge text-center select-none break-normal w-full max-w-full text-text-primary">
+        SIP&SITE
+      </h1>
+    </a>
+  </header>
 
-    <main class="flex-grow">
-      <nav class="sticky top-4 md:top-5 z-50 w-full flex justify-center px-4 mb-16 md:mb-24 pointer-events-none">
-        <div class="flex items-center gap-1 md:gap-2 nav-glass p-1.5 md:px-3 md:py-2 rounded-full pointer-events-auto max-w-[95vw] overflow-x-auto no-scrollbar">
-          <a href="design1fix.html" class="whitespace-nowrap px-4 md:px-5 py-2 text-text-primary border border-[rgba(181,118,42,0.22)] rounded-full text-[11px] md:text-sm font-medium hover:bg-brand-primary hover:text-white transition-all duration-300">
-            ← Back Home
-          </a>
+  <main class="flex-grow">
+    <nav class="sticky top-4 z-50 w-full flex justify-center px-4 mb-16 pointer-events-none">
+      <div class="flex items-center gap-2 backdrop-blur-sm bg-white/60 border border-[rgba(181,118,42,0.16)] shadow-sm px-3 py-2 rounded-full pointer-events-auto">
+        <a href="design1fix.html"
+           class="whitespace-nowrap px-5 py-2 text-text-primary border border-[rgba(181,118,42,0.22)] rounded-full text-sm font-medium hover:bg-brand-primary hover:text-white transition-all duration-300">
+          ← Back Home
+        </a>
+      </div>
+    </nav>
+    <a href="design1fixquote.html"
+      class="fixed bottom-6 right-6 z-50 whitespace-nowrap px-7 py-4 text-white rounded-full text-sm font-medium bg-brand-primary shadow-xl hover:scale-105 hover:bg-brand-secondary transition-all duration-300">
+      Get New Quote
+    </a>
+
+    <section class="max-w-7xl mx-auto px-5 mb-40">
+      <div class="text-center mb-16" data-animation-on-scroll>
+        <span class="text-xs uppercase tracking-[0.3em] text-brand-secondary block mb-6">Results</span>
+        <h2 class="text-display font-semibold uppercase tracking-huge mb-8 text-text-primary">
+          Your Top Recommended<br>Locations
+        </h2>
+        <p class="text-text-secondary text-xl max-w-2xl mx-auto">
+          Click any card to open the full site analysis with maps and demographic charts.
+        </p>
+        <div class="mt-10 h-px w-24 mx-auto bg-[rgba(181,118,42,0.22)]"></div>
+      </div>
+
+      <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-y-5 md:gap-y-6 md:gap-x-10" data-animation-on-scroll></div>
+    </section>
+  </main>
+
+  <footer class="bg-neutral-surface border-t border-border-dim py-20 px-5">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="md:col-span-2 space-y-6">
+          <h2 class="text-3xl font-semibold uppercase tracking-tighter text-text-primary">SIP&SITE ADVISORY</h2>
+          <p class="text-text-secondary text-lg max-w-sm">Strategic site selection and demographic intelligence for the world's most ambitious hospitality concepts.</p>
         </div>
-      </nav>
-
-      <section class="max-w-6xl mx-auto px-5 mb-40">
-        <div class="text-center mb-16" data-animation-on-scroll>
-            <span class="text-xs uppercase tracking-[0.3em] text-brand-secondary block mb-6">Results</span>
-            <h2 class="text-display font-semibold uppercase tracking-huge mb-8 text-text-primary">
-            Your Top 6 <br>Recommended Locations
-            </h2>
-            <p class="text-text-secondary text-xl max-w-2xl mx-auto">
-            Here are your strongest location matches based on your business preferences.
-            </p>
-            <div class="mt-10 h-px w-24 mx-auto warm-divider"></div>
-        </div>
-
-        <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-16 max-w-5xl mx-auto" data-animation-on-scroll></div>
-        </section>
-    </main>
-
-    <footer class="bg-neutral-surface border-t border-border-dim py-20 px-5">
-      <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div class="md:col-span-2 space-y-6">
-            <h2 class="text-3xl font-semibold uppercase tracking-tighter text-text-primary">SIP&SITE ADVISORY</h2>
-            <p class="text-text-secondary text-lg max-w-sm">
-              Strategic site selection and demographic intelligence for the world's most ambitious hospitality concepts.
-            </p>
-          </div>
-          <div class="space-y-4">
-            <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Explore</h3>
-            <ul class="space-y-2">
-              <li><a href="design1fix.html" class="hover:text-brand-primary transition-colors">Home</a></li>
+        <div class="space-y-4">
+          <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Explore</h3>
+          <ul class="space-y-2">
+            <li><a href="design1fix.html" class="hover:text-brand-primary transition-colors">Home</a></li>
               <li><a href="design1fix.html#intelligence" class="hover:text-brand-primary transition-colors">Intelligence</a></li>
               <li><a href="design1fix.html#curated" class="hover:text-brand-primary transition-colors">Curated Sites</a></li>
-              <li><a href="design1fixquote.html" class="hover:text-brand-primary transition-colors">Get a Quote</a></li>
-            </ul>
-          </div>
-          <div class="space-y-4">
-            <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Global Hubs</h3>
-            <ul class="space-y-2 text-text-secondary">
-              <li>London — Mayfair</li>
-              <li>New York — Tribeca</li>
-              <li>Dubai — DIFC</li>
-            </ul>
-          </div>
+              <li><a href="design1fixquote.html" class="hover:text-brand-primary transition-colors font-bold text-brand-primary">Get a Quote</a></li>
+          </ul>
         </div>
-        <div class="mt-20 pt-8 border-t border-border-dim flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary uppercase tracking-widest">
-          <p>© 2025 SIP&SITE. ALL RIGHTS RESERVED.</p>
-          <p>BUILT FOR VISIONARIES.</p>
+        <div class="space-y-4">
+          <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Global Hubs</h3>
+          <ul class="space-y-2 text-text-secondary">
+            <li>Australia - Sydney</li>
+          </ul>
         </div>
       </div>
-    </footer>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const logo = document.getElementById('logo-text');
-      if (logo) {
-        const text = logo.textContent.trim();
-        logo.textContent = '';
-        [...text].forEach((char, i) => {
-          const span = document.createElement('span');
-          span.textContent = char === ' ' ? '\u00A0' : char;
-          span.classList.add('letter');
-          span.style.transitionDelay = `${i * 0.08}s`;
-          logo.appendChild(span);
-          requestAnimationFrame(() => {
-            setTimeout(() => span.classList.add('visible'), 100);
-          });
-        });
-      }
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-on-scroll-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('[data-animation-on-scroll]').forEach(el => {
-        el.classList.add('animate-on-scroll-hidden');
-        observer.observe(el);
-      });
-    });
-  </script>
-
-  <script src="https://api.landinghero.ai/public/assistant-widget.js" data-lh-assistant-widget="true" data-project-id="2BI5i0N1nANJ1J9lqiFp"></script>
-
-<script>
-(function renderRecommendations() {
-  const stored = localStorage.getItem('recommendations');
-  const grid = document.getElementById('results-grid');
-  if (!grid) return;
-
-  if (!stored) {
-    grid.innerHTML = `
-      <div class="col-span-full text-center py-20 text-text-secondary">
-        <p class="text-2xl mb-4">No recommendations found.</p>
-        <a href="design1fixquote.html" class="underline text-brand-primary">
-          Go back and submit the quote form
-        </a>
-      </div>`;
-    return;
-  }
-
-  const recommendations = JSON.parse(stored);
-  grid.innerHTML = recommendations.map((rec) => `
-    <div class="bg-white rounded-2xl p-5 border border-[rgba(181,118,42,0.10)] shadow-sm">
-      <div class="flex flex-col md:flex-row gap-5 items-start">
-        <img data-suburb="${rec.sa2_name}" alt="${rec.sa2_name}"
-             class="w-full md:w-44 h-44 object-cover rounded-2xl shrink-0">
-        <div class="flex-1">
-          <h3 class="text-2xl font-semibold text-text-primary mb-1">
-            Top ${rec.rank} — ${rec.sa2_name}
-          </h3>
-          <p class="text-sm text-brand-secondary mb-4">Score ${rec.score.toFixed(3)}</p>
-          <div class="space-y-2 text-[15px] text-text-primary leading-7 font-secondary">
-            ${rec.reasons.map(r => `<p>${r}</p>`).join('')}
-          </div>
-          ${rec.rental ? `
-            <p class="text-xs text-text-secondary mt-3">
-              Est. rent ~$${rec.rental.rent_sqm_yr}/sqm/yr · ${rec.rental.zone}
-            </p>` : ''}
-          <a href="${rec.maps_url}" target="_blank"
-             class="inline-block mt-4 text-xs uppercase tracking-widest text-brand-primary hover:text-brand-secondary">
-            View on Google Maps →
-          </a>
-        </div>
+      <div class="mt-20 pt-8 border-t border-border-dim flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary uppercase tracking-widest">
+        <p>© 2026 SIP&SITE. ALL RIGHTS RESERVED.</p><p>BUILT FOR VISIONARIES.</p>
       </div>
     </div>
-  `).join('');
-})();
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL OVERLAY
+════════════════════════════════════════════════════════════════════ -->
+<div id="detail-modal"
+     class="hidden fixed inset-0 z-[9999] flex items-start justify-center p-4 md:p-8 bg-black/60 backdrop-blur-sm overflow-y-auto"
+     onclick="handleModalBackdrop(event)">
+
+  <div id="modal-inner"
+       class="bg-white rounded-3xl w-full max-w-4xl my-auto shadow-2xl relative">
+
+    <!-- Close button -->
+    <button onclick="closeModal()"
+            class="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 text-text-secondary hover:text-text-primary transition-colors text-lg font-bold">
+      ✕
+    </button>
+
+    <!-- Modal header -->
+    <div class="flex gap-5 p-7 pb-5 border-b border-[rgba(181,118,42,0.12)]">
+      <img id="modal-img" alt="" class="w-24 h-24 rounded-xl object-cover shrink-0">
+      <div class="flex-1 pt-1">
+        <h2 id="modal-title" class="text-2xl font-semibold text-text-primary mb-1"></h2>
+        <p id="modal-score" class="text-sm text-brand-secondary mb-3"></p>
+        <div id="modal-pills" class="flex gap-2 flex-wrap"></div>
+      </div>
+      <a id="modal-listings" href="#" target="_blank"
+         class="hidden self-start mr-12 px-5 py-3 bg-brand-primary text-white rounded-full text-sm font-semibold whitespace-nowrap shadow-md hover:bg-brand-secondary hover:shadow-lg transition-all duration-200">
+        🏢 Browse Available Shops →
+      </a>
+    </div>
+
+    <div class="px-7 pb-8 pt-6 space-y-8">
+
+      <!-- Why this location -->
+      <div>
+        <h3 class="text-xs uppercase tracking-widest text-brand-secondary mb-3">Why This Location</h3>
+        <div id="modal-reasons" class="space-y-1.5"></div>
+      </div>
+
+      <!-- Stats grid -->
+      <div>
+        <h3 class="text-xs uppercase tracking-widest text-brand-secondary mb-3">Location Statistics</h3>
+        <div id="modal-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+      </div>
+
+      <!-- Maps -->
+      <div>
+        <h3 class="text-xs uppercase tracking-widest text-brand-secondary mb-3">Maps</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs text-text-secondary font-medium mb-1.5">Nearby Restaurants &amp; Cafes</p>
+            <div id="modal-map-nearby" class="h-[420px] rounded-xl bg-neutral-100 relative overflow-hidden">
+              <p id="modal-map-nearby-status"
+                 class="absolute inset-0 flex items-center justify-center text-xs text-text-secondary pointer-events-none">
+                Loading nearby venues…
+              </p>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-text-secondary font-medium mb-1.5">Recommended Site Area</p>
+            <div id="modal-map-loc" class="h-[420px] rounded-xl bg-neutral-100"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div>
+        <h3 class="text-xs uppercase tracking-widest text-brand-secondary mb-3">Sydney Demographics - Where This Area Sits</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div id="modal-metric-income"></div>
+          <div id="modal-metric-density"></div>
+        </div>
+      </div>
+
+      <!-- Google Maps link -->
+      <a id="modal-gmaps" href="#" target="_blank"
+         class="inline-block text-xs uppercase tracking-widest text-brand-primary hover:text-brand-secondary transition-colors">
+        Open in Google Maps →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SUBURB IMAGE GENERATOR
+════════════════════════════════════════════════════════════════════ -->
+<script>
+function createSuburbImage(name, w, h) {
+  const dpr = window.devicePixelRatio || 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  const hue = Math.abs(hash % 360);
+  let s = Math.abs(hash);
+  function rand() { s = (s * 16807 + 11) % 2147483647; return (s & 0x7fffffff) / 0x7fffffff; }
+
+  const grad = ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,`hsl(${hue},45%,40%)`); grad.addColorStop(1,`hsl(${hue},55%,15%)`);
+  ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+  const groundY = h*0.9; let x = 0;
+  while (x < w) {
+    const bw=20+rand()*45, bh=40+rand()*130, shade=10+rand()*25;
+    ctx.fillStyle=`rgb(${shade},${shade},${shade+8})`; ctx.fillRect(x,groundY-bh,bw,bh);
+    for (let wy=groundY-bh+6; wy<groundY-5; wy+=14)
+      for (let wx=x+4; wx<x+bw-4; wx+=10) {
+        const lit=rand();
+        ctx.fillStyle = lit>.7?`rgba(255,230,150,${.3+rand()*.5})`:lit>.4?`rgba(180,210,255,${.2+rand()*.3})`:'rgba(40,40,50,.5)';
+        ctx.fillRect(wx,wy,4,5);
+      }
+    x += bw+2+rand()*8;
+  }
+  ctx.fillStyle='#141210'; ctx.fillRect(0,groundY,w,h-groundY);
+  const pillW=Math.max(name.length*14,120);
+  ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath();
+  ctx.roundRect(w/2-pillW/2,12,pillW,44,22); ctx.fill();
+  ctx.textAlign='center';
+  ctx.font=`bold 18px "Roboto Condensed",sans-serif`;
+  ctx.fillStyle='rgba(0,0,0,.5)'; ctx.fillText(name,w/2+1,33);
+  ctx.fillStyle='#fff'; ctx.fillText(name,w/2,32);
+  ctx.font=`10px "Roboto Condensed",sans-serif`;
+  ctx.fillStyle='rgba(220,220,220,.8)'; ctx.fillText('Sydney, NSW',w/2,47);
+  return canvas.toDataURL('image/png');
+}
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL LOGIC
+════════════════════════════════════════════════════════════════════ -->
 <script>
-(function() {
-  // Generate unique color from suburb name
-  function hashColor(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
-    const hue = Math.abs(h % 360);
-    return { hue, h };
+let modalMapNearby = null, modalMapLoc = null;
+let modalChartIncome = null, modalChartDensity = null;
+
+function handleModalBackdrop(e) {
+  if (e.target === document.getElementById('detail-modal')) closeModal();
+}
+
+function closeModal() {
+  const modal = document.getElementById('detail-modal');
+  modal.classList.add('hidden');
+  document.body.style.overflow = '';
+  // Destroy map instances so next open gets a fresh render
+  if (modalMapNearby) { modalMapNearby.remove(); modalMapNearby = null; }
+  if (modalMapLoc)    { modalMapLoc.remove();    modalMapLoc = null; }
+  if (modalChartIncome)  { modalChartIncome.destroy();  modalChartIncome = null; }
+  if (modalChartDensity) { modalChartDensity.destroy(); modalChartDensity = null; }
+  // Reset map containers so Leaflet can re-attach
+  document.getElementById('modal-map-nearby').innerHTML =
+    '<p id="modal-map-nearby-status" class="absolute inset-0 flex items-center justify-center text-xs text-text-secondary pointer-events-none">Loading nearby venues…</p>';
+  document.getElementById('modal-map-loc').innerHTML = '';
+}
+
+function openModal(rank) {
+  const recJson = document.getElementById(`rec-data-${rank}`).textContent;
+  const rec     = JSON.parse(recJson);
+
+  // --- Populate static content ---
+  document.getElementById('modal-img').src = createSuburbImage(rec.sa2_name, 320, 240);
+  document.getElementById('modal-img').alt = rec.sa2_name;
+  document.getElementById('modal-title').textContent = `${rec.rank}. ${rec.sa2_name}`;
+  document.getElementById('modal-score').textContent  = `Score ${rec.score.toFixed(3)}`;
+  document.getElementById('modal-gmaps').href = rec.maps_url;
+
+  // Listings link (only show if backend provided one)
+  const listingsEl = document.getElementById('modal-listings');
+  if (rec.listings_url) {
+    listingsEl.href = rec.listings_url;
+    listingsEl.classList.remove('hidden');
+  } else {
+    listingsEl.classList.add('hidden');
   }
 
-  function createSuburbImage(name, w, h) {
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    const { hue, h: seed } = hashColor(name);
+  // Quick pills
+  const stats = rec.stats;
+  document.getElementById('modal-pills').innerHTML = [
+    `<span class="text-xs px-2 py-1 rounded-full bg-neutral-100 text-text-secondary">🚶 ${stats.foot_traffic?.toLocaleString()} POIs/1km</span>`,
+    `<span class="text-xs px-2 py-1 rounded-full bg-neutral-100 text-text-secondary">🏪 ${stats.competitors} competitors</span>`,
+    rec.rental ? `<span class="text-xs px-2 py-1 rounded-full bg-neutral-100 text-text-secondary">💰 $${rec.rental.rent_sqm_yr}/sqm/yr · ${rec.rental.zone}</span>` : '',
+  ].join('');
 
-    // Gradient sky
-    const grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, `hsl(${hue}, 45%, 40%)`);
-    grad.addColorStop(1, `hsl(${hue}, 55%, 15%)`);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
+  // Reasons
+  document.getElementById('modal-reasons').innerHTML =
+    rec.reasons.map(r => `<p class="text-sm text-text-primary leading-6">• ${r.replace(/\s*—\s*/g, ': ')}</p>`).join('');
 
-    // Seeded random
-    let s = Math.abs(seed);
-    function rand() { s = (s * 16807 + 11) % 2147483647; return (s & 0x7fffffff) / 0x7fffffff; }
+  // Stats grid
+  const statItems = [
+    { label: 'POIs within 1km',    value: stats.foot_traffic?.toLocaleString() ?? '-' },
+    { label: 'Direct competitors', value: stats.competitors ?? '-' },
+    { label: 'Complementary POIs', value: stats.complementary?.toLocaleString() ?? '-' },
+    { label: 'Median income /wk',  value: stats.median_income ? `$${stats.median_income.toLocaleString()}` : '-' },
+    { label: 'Population density', value: stats.pop_density   ? `${stats.pop_density.toLocaleString()}/km²` : '-' },
+    { label: 'Nearest rail',       value: stats.dist_rail_km != null ? `${stats.dist_rail_km} km` : '—' },
+  ];
+  if (rec.rental) statItems.push({ label: `Rent (${rec.rental.zone})`, value: `$${rec.rental.rent_sqm_yr}/sqm/yr` });
+  document.getElementById('modal-stats').innerHTML = statItems.map(it =>
+    `<div class="stat-pill"><strong>${it.value}</strong>${it.label}</div>`
+  ).join('');
 
-    // Buildings
-    const groundY = h * 0.9;
-    let x = 0;
-    while (x < w) {
-      const bw = 25 + rand() * 60;
-      const bh = 60 + rand() * 180;
-      const shade = 10 + rand() * 30;
-      ctx.fillStyle = `rgb(${shade},${shade},${shade + 8})`;
-      ctx.fillRect(x, groundY - bh, bw, bh);
+  // Render percentile bars
+  renderMetricCard('modal-metric-income',  rec.income_distribution,
+    'Median Weekly Household Income', '$', '/wk',
+    'higher income than', 'lower income than');
+  renderMetricCard('modal-metric-density', rec.pop_distribution,
+    'Population Density', '', ' people/km²',
+    'denser than', 'less dense than');
 
-      // Windows
-      for (let wy = groundY - bh + 8; wy < groundY - 6; wy += 16) {
-        for (let wx = x + 5; wx < x + bw - 5; wx += 12) {
-          const lit = rand();
-          if (lit > 0.4) {
-            ctx.fillStyle = lit > 0.7
-              ? `rgba(255,230,150,${0.3 + rand()*0.5})`
-              : `rgba(180,210,255,${0.2 + rand()*0.3})`;
-          } else {
-            ctx.fillStyle = 'rgba(40,40,50,0.5)';
-          }
-          ctx.fillRect(wx, wy, 5, 6);
-        }
-      }
-      x += bw + 2 + rand() * 10;
-    }
+  // Show modal
+  document.getElementById('detail-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 
-    // Ground
-    ctx.fillStyle = '#141210';
-    ctx.fillRect(0, groundY, w, h - groundY);
+  // Init maps after paint
+  setTimeout(() => {
+    initModalLocMap(rec);
+    initModalNearbyMap(rec);
+  }, 60);
+}
 
-    // Text background pill
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    const pillW = Math.max(name.length * 22, 180);
-    ctx.beginPath();
-    ctx.roundRect(w/2 - pillW/2, 30, pillW, 65, 30);
-    ctx.fill();
-
-    // Suburb name
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-    ctx.font = 'bold 32px "Roboto Condensed", Georgia, sans-serif';
-    ctx.fillText(name, w/2 + 1, 62);
-    ctx.fillStyle = '#fff';
-    ctx.fillText(name, w/2, 61);
-
-    ctx.font = '14px "Roboto Condensed", Georgia, sans-serif';
-    ctx.fillStyle = 'rgba(220,220,220,0.8)';
-    ctx.fillText('Sydney, NSW', w/2, 83);
-
-    return canvas.toDataURL('image/png');
+// Map: recommended hex site
+function initModalLocMap(rec) {
+  const el = document.getElementById('modal-map-loc');
+  if (!el || modalMapLoc) return;
+  modalMapLoc = L.map('modal-map-loc').setView([rec.lat, rec.lon], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 19
+  }).addTo(modalMapLoc);
+  if (rec.hex_boundary?.length) {
+    L.polygon(rec.hex_boundary, { color:'#B5762A', weight:2, fillColor:'#B5762A', fillOpacity:0.2 })
+     .addTo(modalMapLoc);
   }
+  L.circleMarker([rec.lat, rec.lon], { radius:9, color:'#B5762A', weight:2, fillColor:'#fff', fillOpacity:1 })
+   .addTo(modalMapLoc)
+   .bindPopup(`<strong>${rec.sa2_name}</strong><br>Score: ${rec.score.toFixed(3)}`);
+  modalMapLoc.invalidateSize();
+}
 
-  // Apply to all suburb images
+// Map: nearby restaurants via Overpass API
+function initModalNearbyMap(rec) {
+  const el = document.getElementById('modal-map-nearby');
+  if (!el || modalMapNearby) return;
+  modalMapNearby = L.map('modal-map-nearby').setView([rec.lat, rec.lon], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 19
+  }).addTo(modalMapNearby);
+  L.circleMarker([rec.lat, rec.lon], { radius:8, color:'#B5762A', weight:2, fillColor:'#B5762A', fillOpacity:0.9 })
+   .addTo(modalMapNearby).bindPopup('Your site');
+  modalMapNearby.invalidateSize();
+
+  const statusEl = document.getElementById('modal-map-nearby-status');
+  const query = `[out:json][timeout:15];node["amenity"~"restaurant|cafe|bar|fast_food"](around:800,${rec.lat},${rec.lon});out;`;
+  fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (statusEl) statusEl.remove();
+      const colors = { restaurant:'#e74c3c', cafe:'#8E6330', bar:'#8e44ad', fast_food:'#e67e22' };
+      (data.elements || []).forEach(el => {
+        const c = colors[el.tags?.amenity] || '#B5762A';
+        L.circleMarker([el.lat, el.lon], { radius:5, color:c, weight:1, fillColor:c, fillOpacity:0.75 })
+         .addTo(modalMapNearby)
+         .bindPopup(el.tags?.name || el.tags?.amenity || 'Venue');
+      });
+      const legend = L.control({ position:'bottomright' });
+      legend.onAdd = () => {
+        const d = L.DomUtil.create('div','');
+        d.style.cssText = 'background:white;padding:6px 10px;border-radius:8px;font-size:11px;line-height:1.8;box-shadow:0 1px 4px rgba(0,0,0,.2)';
+        d.innerHTML = '<b>Legend</b><br>'
+          + '<span style="color:#B5762A">●</span> Your site<br>'
+          + '<span style="color:#e74c3c">●</span> Restaurant<br>'
+          + '<span style="color:#8E6330">●</span> Cafe<br>'
+          + '<span style="color:#8e44ad">●</span> Bar';
+        return d;
+      };
+      legend.addTo(modalMapNearby);
+    })
+    .catch(() => {
+      if (statusEl) statusEl.textContent = 'Could not load nearby venues.';
+    });
+}
+
+function computePercentile(bins, counts, value) {
+  if (value == null) return null;
+  let below = 0;
+  const total = counts.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < counts.length; i++) {
+    if (value >= bins[i + 1]) { below += counts[i]; }
+    else if (value >= bins[i]) { below += counts[i] * (value - bins[i]) / (bins[i+1] - bins[i]); break; }
+  }
+  return Math.round((below / total) * 100);
+}
+
+function computeMean(bins, counts) {
+  const total = counts.reduce((a, b) => a + b, 0);
+  let sum = 0;
+  for (let i = 0; i < counts.length; i++) sum += ((bins[i] + bins[i+1]) / 2) * counts[i];
+  return Math.round(sum / total);
+}
+
+function renderMetricCard(containerId, distData, title, prefix, suffix, aboveLabel, belowLabel) {
+  const el = document.getElementById(containerId);
+  if (!el || !distData) return;
+  const pct     = computePercentile(distData.bins, distData.counts, distData.location_value);
+  const meanPct = computePercentile(distData.bins, distData.counts, computeMean(distData.bins, distData.counts));
+  const locVal  = distData.location_value;
+  if (pct === null) { el.innerHTML = ''; return; }
+  const isAbove  = pct >= 50;
+  const pctOther = isAbove ? pct : (100 - pct);
+  const direction = isAbove ? aboveLabel : belowLabel;
+  const barColor  = pct >= 75 ? '#B5762A' : pct >= 50 ? '#C89A5A' : pct >= 25 ? '#8E6330' : '#5C4A36';
+  el.innerHTML = `
+    <div class="bg-[#FAF7F2] rounded-xl p-5">
+      <p class="text-xs uppercase tracking-widest text-brand-secondary mb-3">${title}</p>
+      <p class="text-3xl font-semibold text-text-primary mb-4">
+        ${prefix}${locVal != null ? locVal.toLocaleString() : '—'}<span class="text-base font-normal text-text-secondary">${suffix}</span>
+      </p>
+      <div class="relative mb-1">
+        <div class="h-2 rounded-full bg-[rgba(181,118,42,0.15)]"></div>
+        <div class="absolute top-0 left-0 h-2 rounded-full" style="width:${pct}%; background:${barColor}; opacity:0.5;"></div>
+        <div class="absolute top-0 h-2 w-0.5 bg-[rgba(181,118,42,0.5)]" style="left:${meanPct}%;"></div>
+        <div class="absolute w-4 h-4 rounded-full border-2 border-white shadow-md -top-1 -translate-x-1/2" style="left:${pct}%; background:${barColor};"></div>
+      </div>
+      <div class="flex justify-between text-[10px] text-text-secondary mt-2 mb-3 px-0.5">
+        <span>Lowest</span><span>Sydney avg</span><span>Highest</span>
+      </div>
+      <p class="text-sm text-text-secondary">
+        ${direction} <strong style="color:${barColor}">${pctOther}%</strong> of Sydney areas
+        <span class="text-xs opacity-60 ml-1">(${pct}th percentile)</span>
+      </p>
+    </div>`;
+}
+
+// Close on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     CARD RENDERING
+════════════════════════════════════════════════════════════════════ -->
+<script>
+function buildCard(rec) {
+  const rank = rec.rank, stats = rec.stats;
+  return `
+    <div class="location-card bg-white rounded-2xl border border-[rgba(181,118,42,0.10)] shadow-sm overflow-hidden cursor-pointer min-h-[12rem] md:min-h-[14rem]"
+         data-animation-on-scroll
+         style="transition-delay: ${Math.max(rank - 1, 0) * 90}ms;"
+         onclick="openModal(${rank})">
+
+      <!-- hidden data store -->
+      <script id="rec-data-${rank}" type="application/json">${JSON.stringify(rec)}<\/script>
+
+      <div class="flex gap-5 p-6 md:p-7">
+        <img data-suburb="${rec.sa2_name}" alt="${rec.sa2_name}"
+             class="result-card-image rounded-xl object-cover shrink-0">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="text-2xl md:text-[1.75rem] font-semibold text-text-primary leading-tight">
+              ${rank}. ${rec.sa2_name}
+            </h3>
+            <!-- "open" indicator -->
+            <svg class="w-6 h-6 shrink-0 mt-1 text-brand-primary opacity-60"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+          </div>
+          <p class="text-base text-brand-secondary mb-3">Score ${rec.score.toFixed(3)}</p>
+          <div class="flex gap-2 flex-wrap mb-3">
+            <span class="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-text-secondary">🚶 ${stats.foot_traffic?.toLocaleString()} POIs/1km</span>
+            <span class="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-text-secondary">🏪 ${stats.competitors} competitors</span>
+            ${rec.rental ? `<span class="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-text-secondary">💰 $${rec.rental.rent_sqm_yr}/sqm/yr</span>` : ''}
+          </div>
+          ${rank === 1 ? '<span class="text-xs px-2 py-1 rounded-full bg-brand-primary text-white font-medium w-fit">Best Match</span>' : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+(function renderRecommendations() {
+  const stored = localStorage.getItem('recommendations');
+  const grid   = document.getElementById('results-grid');
+  if (!grid) return;
+  if (!stored) {
+    grid.innerHTML = `<div class="col-span-full text-center py-20 text-text-secondary">
+      <p class="text-2xl mb-4">No recommendations found.</p>
+      <a href="design1fixquote.html" class="underline text-brand-primary">Go back and submit the quote form</a>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = JSON.parse(stored).map(buildCard).join('');
   document.querySelectorAll('img[data-suburb]').forEach(img => {
-    const name = img.dataset.suburb;
-    img.src = createSuburbImage(name, 640, 400);
+    img.src = createSuburbImage(img.dataset.suburb, 320, 240);
   });
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PAGE ANIMATIONS
+════════════════════════════════════════════════════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const logo = document.getElementById('logo-text');
+  if (logo) {
+    const text = logo.textContent.trim(); logo.textContent = '';
+    [...text].forEach((char, i) => {
+      const span = document.createElement('span');
+      span.textContent = char === ' ' ? '\u00A0' : char;
+      span.classList.add('letter');
+      span.style.transitionDelay = `${i*0.08}s`;
+      logo.appendChild(span);
+      requestAnimationFrame(() => setTimeout(() => span.classList.add('visible'), 100));
+    });
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('animate-on-scroll-visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-animation-on-scroll]').forEach(el => {
+    el.style.willChange = 'opacity, transform';
+    el.classList.add('animate-on-scroll-hidden'); obs.observe(el);
+  });
+});
+</script>
+
 </body>
 </html>
