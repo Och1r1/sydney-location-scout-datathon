@@ -1,12 +1,12 @@
-# Sip&Site — Sydney Hospitality Location Intelligence
+# Sip&Site: Sydney Hospitality Location Intelligence
 
-> Smart location scouting for F&B founders. Submit your business profile, get your top Sydney suburbs ranked by data — not guesswork.
+> Smart location scouting for F&B founders. Submit your business profile, get your top Sydney suburbs ranked by data, not guesswork.
 
 ---
 
 ## What It Does
 
-Sip&Site helps hospitality entrepreneurs find the best location for their business in Sydney. Input your business type, budget, target customer, and priorities — and the platform returns ranked suburb recommendations backed by real geospatial and demographic data.
+Sip&Site helps hospitality entrepreneurs find the best location for their business in Sydney. Input your business type, budget, target customer, priorities, and the platform returns ranked suburb recommendations backed by real geospatial and demographic data.
 
 Each recommendation includes:
 - A composite location score
