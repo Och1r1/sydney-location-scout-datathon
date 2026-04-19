@@ -1,3 +1,4 @@
+
 import numpy as np
 import pandas as pd
 import geopandas as gpd
@@ -227,8 +228,130 @@ BUSINESS_TYPE_TO_FSQ = {
 }
 
 # ---------------------------------------------------------------------------
+# Property listings deep-link builder
+# Maps business type → property type slug for commercialrealestate.com.au URLs
+# ---------------------------------------------------------------------------
+BUSINESS_TYPE_TO_PROPERTY = {
+    "Specialty Cafe":         "retail",
+    "Fine Dining Restaurant": "retail",
+    "Casual Dining":          "retail",
+    "Cocktail Bar / Lounge":  "retail",
+    "Bistro":                 "retail",
+}
+
+# ---------------------------------------------------------------------------
+# Suburb → postcode lookup for building accurate property-listing URLs
+# Covers the suburbs that appear in top recommendations across typical queries
+# ---------------------------------------------------------------------------
+SUBURB_POSTCODES = {
+    # Inner City / CBD
+    "Sydney": 2000, "Haymarket": 2000, "Millers Point": 2000, "Dawes Point": 2000,
+    "The Rocks": 2000, "Walsh Bay": 2000,
+    "Pyrmont": 2009, "Ultimo": 2007,
+    "Surry Hills": 2010, "Darlinghurst": 2010, "Chippendale": 2008,
+    "Redfern": 2016, "Waterloo": 2017, "Zetland": 2017,
+    "Potts Point": 2011, "Elizabeth Bay": 2011, "Rushcutters Bay": 2011,
+    "Woolloomooloo": 2011,
+    # Inner West
+    "Newtown": 2042, "Camperdown": 2050, "Darlington": 2008,
+    "Marrickville": 2204, "Sydenham": 2044, "Enmore": 2042, "Stanmore": 2048,
+    "Leichhardt": 2040, "Annandale": 2038, "Lilyfield": 2040,
+    "Balmain": 2041, "Rozelle": 2039, "Birchgrove": 2041,
+    "Glebe": 2037, "Forest Lodge": 2037,
+    "Ashfield": 2131, "Summer Hill": 2130, "Haberfield": 2045,
+    "Dulwich Hill": 2203, "Petersham": 2049, "Lewisham": 2049,
+    "Erskineville": 2043, "Alexandria": 2015, "St Peters": 2044, "Tempe": 2044,
+    # Eastern Suburbs
+    "Bondi": 2026, "Bondi Junction": 2022, "Waverley": 2024, "Waverly": 2024,
+    "Bronte": 2024, "Tamarama": 2026,
+    "Coogee": 2034, "Clovelly": 2031, "Randwick": 2031,
+    "Kingsford": 2032, "Kensington": 2033, "Maroubra": 2035,
+    "Paddington": 2021, "Woollahra": 2025, "Centennial Park": 2021,
+    "Queens Park": 2022,
+    "Double Bay": 2028, "Darling Point": 2027, "Edgecliff": 2027,
+    "Bellevue Hill": 2023, "Rose Bay": 2029, "Vaucluse": 2030,
+    # North Shore
+    "North Sydney": 2060, "Lavender Bay": 2060, "Kirribilli": 2061,
+    "McMahons Point": 2060, "Milsons Point": 2061,
+    "Crows Nest": 2065, "Waverton": 2060, "Wollstonecraft": 2065,
+    "St Leonards": 2065, "Cammeray": 2062, "Naremburn": 2065,
+    "Neutral Bay": 2089, "Cremorne": 2090, "Mosman": 2088,
+    "Chatswood": 2067, "Artarmon": 2064, "Willoughby": 2068,
+    "Roseville": 2069, "Lindfield": 2070, "Killara": 2071,
+    "Gordon": 2072, "Pymble": 2073, "Turramurra": 2074,
+    "Wahroonga": 2076, "Waitara": 2077, "Hornsby": 2077,
+    "Lane Cove": 2066, "Greenwich": 2065, "Longueville": 2066,
+    # Northern Beaches
+    "Manly": 2095, "Fairlight": 2094, "Balgowlah": 2093, "Seaforth": 2092,
+    "Dee Why": 2099, "Brookvale": 2100, "Curl Curl": 2096, "Freshwater": 2096,
+    "Collaroy": 2097, "Narrabeen": 2101, "Mona Vale": 2103, "Newport": 2106,
+    "Avalon": 2107, "Palm Beach": 2108,
+    # Western Sydney
+    "Parramatta": 2150, "Harris Park": 2150, "Granville": 2142,
+    "Merrylands": 2160, "Holroyd": 2142,
+    "Westmead": 2145, "Wentworthville": 2145,
+    "Auburn": 2144, "Lidcombe": 2141,
+    "Blacktown": 2148, "Quakers Hill": 2763, "Mount Druitt": 2770,
+    "Penrith": 2750, "Cambridge Park": 2747, "Kingswood": 2747,
+    "Liverpool": 2170, "Fairfield": 2165, "Bankstown": 2200,
+    "Campbelltown": 2560, "Macquarie Fields": 2564, "Minto": 2566,
+    "Leumeah": 2560, "Ingleburn": 2565, "Glenfield": 2167,
+}
+
+# ---------------------------------------------------------------------------
 # Utility functions
 # ---------------------------------------------------------------------------
+
+def _slug(name: str) -> str:
+    """Turn 'Crows Nest - Waverton' into 'crows-nest-waverton'."""
+    return (
+        name.lower()
+            .replace(' - ', '-')
+            .replace(' ', '-')
+            .replace('(', '')
+            .replace(')', '')
+            .replace(',', '')
+            .replace('--', '-')
+            .strip('-')
+    )
+
+def build_listings_url(suburb: str, postcode, business_type: str = None) -> str:
+    """
+    Deep-link to realcommercial.com.au search results for this suburb.
+    """
+    if not suburb or pd.isna(suburb):
+        return None
+    slug = _slug(str(suburb))
+    if postcode and pd.notna(postcode):
+        return f"https://www.realcommercial.com.au/for-lease/{slug}-nsw-{int(postcode)}/"
+    return f"https://www.realcommercial.com.au/for-lease/{slug}-nsw/"
+
+def lookup_postcode(sa2_name):
+    """Match an SA2 name (which may contain multiple suburbs) to a postcode."""
+    if not sa2_name or not isinstance(sa2_name, str):
+        return None
+    # SA2 names look like 'Crows Nest - Waverton' or 'Pyrmont' or 'Paddington - Moore Park'
+    # Try each part until we find a match
+    for part in sa2_name.replace('(', '').replace(')', '').split(' - '):
+        part = part.strip()
+        if part in SUBURB_POSTCODES:
+            return SUBURB_POSTCODES[part]
+        # Try the first word too
+        first = part.split()[0] if part.split() else ''
+        if first in SUBURB_POSTCODES:
+            return SUBURB_POSTCODES[first]
+    return None
+
+
+def primary_suburb(sa2_name):
+    """Extract the primary suburb name from an SA2 name (first part before ' - ')."""
+    if not sa2_name or not isinstance(sa2_name, str):
+        return None
+    first_part = sa2_name.split(' - ')[0].strip()
+    # Clean brackets: 'Sydney (North)' → 'Sydney'
+    return first_part.split('(')[0].strip()
+
+
 
 def haversine_km(lat1, lon1, lat2, lon2):
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
@@ -767,9 +890,13 @@ def score_locations(
         except Exception:
             hex_boundary = []
 
+        sa2 = feature_row.get('sa2_name', '')
+        suburb = primary_suburb(sa2)
+        postcode = lookup_postcode(sa2)
+        listings_url = build_listings_url(suburb, postcode, business_type)
+
         rental_info = None
         if rental_df is not None:
-            sa2 = feature_row.get('sa2_name', '')
             for _, r in rental_df.iterrows():
                 if isinstance(sa2, str) and (
                     r['suburb'].lower() in sa2.lower() or sa2.lower() in r['suburb'].lower()
@@ -784,10 +911,13 @@ def score_locations(
         results.append({
             "rank":        rank,
             "sa2_name":    feature_row.get('sa2_name', 'Unknown'),
+            "suburb":       suburb,
+            "postcode":     postcode,
             "score":       round(float(row['score']), 3),
             "lat":         round(float(row['centre_lat']), 5),
             "lon":         round(float(row['centre_lon']), 5),
             "maps_url":    f"https://www.google.com/maps/@{row['centre_lat']:.5f},{row['centre_lon']:.5f},17z",
+            "listings_url": listings_url,
             "reasons":     reasons,
             "rental":      rental_info,
             "vision_echo": vision or None,
