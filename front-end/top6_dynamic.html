@@ -175,6 +175,10 @@
         <p id="modal-score" class="text-sm text-brand-secondary mb-3"></p>
         <div id="modal-pills" class="flex gap-2 flex-wrap"></div>
       </div>
+      <a id="modal-listings" href="#" target="_blank"
+         class="hidden self-start mr-12 px-5 py-3 bg-brand-primary text-white rounded-full text-sm font-semibold whitespace-nowrap shadow-md hover:bg-brand-secondary hover:shadow-lg transition-all duration-200">
+        🏢 Browse Available Shops →
+      </a>
     </div>
 
     <div class="px-7 pb-8 pt-6 space-y-8">
@@ -316,6 +320,15 @@ function openModal(rank) {
   document.getElementById('modal-title').textContent = `Top ${rec.rank} - ${rec.sa2_name}`;
   document.getElementById('modal-score').textContent  = `Score ${rec.score.toFixed(3)}`;
   document.getElementById('modal-gmaps').href = rec.maps_url;
+
+  // Listings link (only show if backend provided one)
+  const listingsEl = document.getElementById('modal-listings');
+  if (rec.listings_url) {
+    listingsEl.href = rec.listings_url;
+    listingsEl.classList.remove('hidden');
+  } else {
+    listingsEl.classList.add('hidden');
+  }
 
   // Quick pills
   const stats = rec.stats;
