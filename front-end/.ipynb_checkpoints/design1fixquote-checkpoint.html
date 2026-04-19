@@ -571,97 +571,18 @@
       /* --- Form submit --- */
       const form = document.getElementById('quote-form');
       if (form) {
-        form.addEventListener('submit', async (e) => {
+        form.addEventListener('submit', (e) => {
           e.preventDefault();
           const btn = form.querySelector('button[type="submit"]');
           const label = document.getElementById('submit-label');
           btn.disabled = true;
           label.textContent = 'Processing Request…';
-
-          // --- Read selected pill values ---
-          const getSelected = (group) =>
-            [...document.querySelectorAll(`.toggle-pill[data-group="${group}"].selected-pill`)]
-              .map(b => b.dataset.val);
-
-          const getSelectedSingle = (group) => {
-            const arr = getSelected(group);
-            return arr.length > 0 ? arr[0] : null;
-          };
-
-          const customers = getSelected('customers');         // multi-select
-          const firstbiz  = getSelectedSingle('firstbiz');    // 'first' or 'expanding'
-          const price     = getSelectedSingle('price');       // 'budget' / 'mid-range' / 'premium'
-          const shopping  = getSelectedSingle('shopping');    // 'yes' / 'no'
-
-          // --- Read sliders ---
-          const ageSlider         = document.getElementById('age-slider');
-          const competitionSlider = document.getElementById('competition-slider');
-          const footTrafficSlider = document.getElementById('foottraffic-slider');
-          const transitSlider     = document.getElementById('transit-slider');
-
-          const ageGroupMap = ['20s', '30s', '40s+'];
-          const ageGroup = ageSlider ? ageGroupMap[parseInt(ageSlider.value)] : null;
-
-          // --- Read selects ---
-          // Order in form:
-          //   [0] business type, [1] current business type, [2] current location, [3] preferred area
-          const selects = document.querySelectorAll('select');
-          const businessType = selects[0] ? selects[0].value : 'Specialty Cafe';
-          const districtRaw  = selects[3] ? selects[3].value : null;
-
-          // Map form labels → backend dictionary keys
-          const DISTRICT_MAP = {
-            "Eastern Suburbs":                   "Eastern Suburbs",
-            "Inner West":                        "Inner West",
-            "North Shore":                       "North Shore",
-            "CBD / City Centre":                 "CBD/Inner City",
-            "Northern Beaches":                  "Northern Beaches",
-            "Inner South (Surry Hills, Newtown)":"Inner West",   // closest mapping
-            "South Sydney":                      "Eastern Suburbs",  // closest mapping
-          };
-          const district = (districtRaw && districtRaw !== "anywhere")
-            ? (DISTRICT_MAP[districtRaw] || districtRaw)
-            : null;
-
-          // --- Build API payload ---
-          const payload = {
-            business_type:           businessType,
-            district:                district || null,
-            is_first_business:       firstbiz === 'first',
-            competition_comfort:     competitionSlider ? parseInt(competitionSlider.value) : 3,
-            foot_traffic_importance: footTrafficSlider ? parseInt(footTrafficSlider.value) : 3,
-            transit_importance:      transitSlider ? parseInt(transitSlider.value) : 3,
-            target_customers:        customers.map(c => c.replace('-', ' ')),
-            age_group:               ageGroup,
-            price_point:             price,
-            near_shopping:           shopping === 'yes',
-            top_n:                   6
-          };
-
-          console.log('Sending to API:', payload);
-
-          try {
-            const response = await fetch('http://localhost:8000/api/quote', {
-              method:  'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body:    JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error(`API returned ${response.status}`);
-
-            const data = await response.json();
-            // Stash results so the next page can read them
-            localStorage.setItem('recommendations', JSON.stringify(data.recommendations));
-            localStorage.setItem('userInputs',      JSON.stringify(payload));
-
+          setTimeout(() => {
             label.textContent = 'Request Sent Successfully';
-            setTimeout(() => { window.location.href = 'top6_dynamic.html'; }, 600);
-          } catch (err) {
-            console.error('API error:', err);
-            label.textContent = 'Error — see console';
-            btn.disabled = false;
-            alert('Could not reach the recommendation API. Make sure the backend is running on http://localhost:8000');
-          }
+            setTimeout(() => {
+              window.location.href = 'top6.html';
+            }, 800);
+          }, 1500);
         });
       }
 
