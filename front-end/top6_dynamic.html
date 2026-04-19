@@ -46,6 +46,18 @@
     /* Card hover */
     .location-card { transition: box-shadow 0.2s ease, transform 0.2s ease; }
     .location-card:hover { box-shadow: 0 8px 32px rgba(181,118,42,0.14); transform: translateY(-2px); }
+
+    .result-card-image {
+      width: 7.5rem;
+      height: 7.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .result-card-image {
+        width: 9rem;
+        height: 9rem;
+      }
+    }
   </style>
 
   <script>
@@ -88,6 +100,10 @@
         </a>
       </div>
     </nav>
+    <a href="design1fixquote.html"
+      class="fixed bottom-6 right-6 z-50 whitespace-nowrap px-7 py-4 text-white rounded-full text-sm font-medium bg-brand-primary shadow-xl hover:scale-105 hover:bg-brand-secondary transition-all duration-300">
+      Get New Quote
+    </a>
 
     <section class="max-w-5xl mx-auto px-5 mb-40">
       <div class="text-center mb-16" data-animation-on-scroll>
@@ -101,7 +117,7 @@
         <div class="mt-10 h-px w-24 mx-auto bg-[rgba(181,118,42,0.22)]"></div>
       </div>
 
-      <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5" data-animation-on-scroll></div>
+      <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-y-5 md:gap-y-6 md:gap-x-10" data-animation-on-scroll></div>
     </section>
   </main>
 
@@ -197,7 +213,7 @@
 
       <!-- Charts -->
       <div>
-        <h3 class="text-xs uppercase tracking-widest text-brand-secondary mb-3">Sydney Demographics — Where This Area Sits</h3>
+        <h3 class="text-xs uppercase tracking-widest text-brand-secondary mb-3">Sydney Demographics - Where This Area Sits</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p class="text-xs text-text-secondary font-medium mb-1.5">Median Weekly Household Income</p>
@@ -297,7 +313,7 @@ function openModal(rank) {
   // --- Populate static content ---
   document.getElementById('modal-img').src = createSuburbImage(rec.sa2_name, 320, 240);
   document.getElementById('modal-img').alt = rec.sa2_name;
-  document.getElementById('modal-title').textContent = `Top ${rec.rank} — ${rec.sa2_name}`;
+  document.getElementById('modal-title').textContent = `Top ${rec.rank} - ${rec.sa2_name}`;
   document.getElementById('modal-score').textContent  = `Score ${rec.score.toFixed(3)}`;
   document.getElementById('modal-gmaps').href = rec.maps_url;
 
@@ -315,11 +331,11 @@ function openModal(rank) {
 
   // Stats grid
   const statItems = [
-    { label: 'POIs within 1km',    value: stats.foot_traffic?.toLocaleString() ?? '—' },
-    { label: 'Direct competitors', value: stats.competitors ?? '—' },
-    { label: 'Complementary POIs', value: stats.complementary?.toLocaleString() ?? '—' },
-    { label: 'Median income /wk',  value: stats.median_income ? `$${stats.median_income.toLocaleString()}` : '—' },
-    { label: 'Population density', value: stats.pop_density   ? `${stats.pop_density.toLocaleString()}/km²` : '—' },
+    { label: 'POIs within 1km',    value: stats.foot_traffic?.toLocaleString() ?? '-' },
+    { label: 'Direct competitors', value: stats.competitors ?? '-' },
+    { label: 'Complementary POIs', value: stats.complementary?.toLocaleString() ?? '-' },
+    { label: 'Median income /wk',  value: stats.median_income ? `$${stats.median_income.toLocaleString()}` : '-' },
+    { label: 'Population density', value: stats.pop_density   ? `${stats.pop_density.toLocaleString()}/km²` : '-' },
     { label: 'Nearest rail',       value: stats.dist_rail_km != null ? `${stats.dist_rail_km} km` : '—' },
   ];
   if (rec.rental) statItems.push({ label: `Rent (${rec.rental.zone})`, value: `$${rec.rental.rent_sqm_yr}/sqm/yr` });
@@ -468,34 +484,36 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 function buildCard(rec) {
   const rank = rec.rank, stats = rec.stats;
   return `
-    <div class="location-card bg-white rounded-2xl border border-[rgba(181,118,42,0.10)] shadow-sm overflow-hidden cursor-pointer"
+    <div class="location-card bg-white rounded-2xl border border-[rgba(181,118,42,0.10)] shadow-sm overflow-hidden cursor-pointer min-h-[12rem] md:min-h-[14rem]"
+         data-animation-on-scroll
+         style="transition-delay: ${Math.max(rank - 1, 0) * 90}ms;"
          onclick="openModal(${rank})">
 
       <!-- hidden data store -->
       <script id="rec-data-${rank}" type="application/json">${JSON.stringify(rec)}<\/script>
 
-      <div class="flex gap-4 p-5">
+      <div class="flex gap-5 p-6 md:p-7">
         <img data-suburb="${rec.sa2_name}" alt="${rec.sa2_name}"
-             class="w-24 h-24 rounded-xl object-cover shrink-0">
+             class="result-card-image rounded-xl object-cover shrink-0">
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="text-xl font-semibold text-text-primary">
-              Top ${rank} — ${rec.sa2_name}
+            <h3 class="text-2xl md:text-[1.75rem] font-semibold text-text-primary leading-tight">
+              Top ${rank} - ${rec.sa2_name}
             </h3>
             <!-- "open" indicator -->
-            <svg class="w-5 h-5 shrink-0 mt-1 text-brand-primary opacity-60"
+            <svg class="w-6 h-6 shrink-0 mt-1 text-brand-primary opacity-60"
                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"
                     d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
             </svg>
           </div>
-          <p class="text-sm text-brand-secondary mb-2">Score ${rec.score.toFixed(3)}</p>
-          <div class="flex gap-2 flex-wrap mb-2">
-            <span class="text-xs px-2 py-1 rounded-full bg-neutral-100 text-text-secondary">🚶 ${stats.foot_traffic?.toLocaleString()} POIs/1km</span>
-            <span class="text-xs px-2 py-1 rounded-full bg-neutral-100 text-text-secondary">🏪 ${stats.competitors} competitors</span>
-            ${rec.rental ? `<span class="text-xs px-2 py-1 rounded-full bg-neutral-100 text-text-secondary">💰 $${rec.rental.rent_sqm_yr}/sqm/yr</span>` : ''}
+          <p class="text-base text-brand-secondary mb-3">Score ${rec.score.toFixed(3)}</p>
+          <div class="flex gap-2 flex-wrap mb-3">
+            <span class="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-text-secondary">🚶 ${stats.foot_traffic?.toLocaleString()} POIs/1km</span>
+            <span class="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-text-secondary">🏪 ${stats.competitors} competitors</span>
+            ${rec.rental ? `<span class="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-text-secondary">💰 $${rec.rental.rent_sqm_yr}/sqm/yr</span>` : ''}
           </div>
-          <p class="text-sm text-text-secondary truncate">${rec.reasons[0] || ''}</p>
+          <p class="text-base text-text-secondary leading-relaxed pr-2">${rec.reasons[0] || ''}</p>
         </div>
       </div>
     </div>`;
@@ -542,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('[data-animation-on-scroll]').forEach(el => {
+    el.style.willChange = 'opacity, transform';
     el.classList.add('animate-on-scroll-hidden'); obs.observe(el);
   });
 });
