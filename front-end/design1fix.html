@@ -159,10 +159,10 @@
     <main class="flex-grow">
       <nav class="sticky top-4 md:top-5 z-50 w-full flex justify-center px-4 mb-16 md:mb-24 pointer-events-none">
         <div class="flex items-center gap-1 md:gap-2 nav-glass p-1.5 md:px-3 md:py-2 rounded-full pointer-events-auto max-w-[95vw] overflow-x-auto no-scrollbar">
-          <a href="#" class="whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Overview</a>
-          <a href="#intelligence" class="whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Intelligence</a>
-          <a href="#curated" class="whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Sites</a>
-          <a href="design1fixquote.html" class="whitespace-nowrap px-4 md:px-5 py-2 bg-brand-primary text-white rounded-full text-[11px] md:text-sm font-bold hover:opacity-90 transition-all duration-300 shadow-md">Request Quote</a>
+          <a href="#" data-section="overview" class="nav-link whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Overview</a>
+          <a href="#intelligence" data-section="intelligence" class="nav-link whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Intelligence</a>
+          <a href="#curated" data-section="curated" class="nav-link whitespace-nowrap px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300">Sites</a>
+          <a href="design1fixquote.html" class="whitespace-nowrap px-4 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-medium text-text-primary hover:bg-brand-primary hover:text-white transition-all duration-300 shadow-md">Request Quote</a>
         </div>
       </nav>
 
@@ -180,7 +180,7 @@
       </section>
 
       <section class="w-full h-[70vh] md:h-screen relative overflow-hidden mb-24 md:mb-40">
-        <img src="https://images.pexels.com/photos/11042570/pexels-photo-11042570.jpeg?w=1920&h=1080&fit=crop" alt="Metropolitan Hospitality District" class="w-full h-full object-cover animate-slow-pan">
+        <img src="operahouse.jpg" alt="Metropolitan Hospitality District" class="w-full h-full object-cover animate-slow-pan">
         <div class="absolute inset-0 bg-gradient-to-t from-[#1E1810]/55 via-[#1E1810]/25 to-transparent"></div>
 
         <div class="absolute bottom-8 left-6 md:bottom-12 md:left-12 max-w-2xl" data-animation-on-scroll>
@@ -205,24 +205,24 @@
                 <div class="flex gap-6">
                   <span class="text-brand-primary font-medium">01</span>
                   <div>
-                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Footfall Analytics</h4>
-                    <p class="text-text-secondary">We analyze pedestrian patterns and demographic heatmaps to ensure your concept meets its ideal audience.</p>
+                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Business Input Profiling</h4>
+                    <p class="text-text-secondary">We ask tailored questions about your F&B concept, budget, target customers, preferred suburbs, accessibility needs, and growth goals to understand your ideal location criteria.</p>
                   </div>
                 </div>
 
                 <div class="flex gap-6">
                   <span class="text-brand-primary font-medium">02</span>
                   <div>
-                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Concept Mapping</h4>
-                    <p class="text-text-secondary">Evaluating local competition and market saturation to find the "white space" for your specific offering.</p>
+                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Smart Data Filtering</h4>
+                    <p class="text-text-secondary">Your responses are processed through our scoring model, using weighted coefficients to filter thousands of locations based on demand, competition, rent potential, foot traffic, and suitability.</p>
                   </div>
                 </div>
 
                 <div class="flex gap-6">
                   <span class="text-brand-primary font-medium">03</span>
                   <div>
-                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Lease Strategy</h4>
-                    <p class="text-text-secondary">Leveraging our network of landlords to secure off-market opportunities and favorable long-term terms.</p>
+                    <h4 class="text-xl font-medium uppercase mb-2 text-text-primary">Top Location Recommendations</h4>
+                    <p class="text-text-secondary">We deliver the best-fit locations ranked for your business, with clear insights on why each area suits your concept and where your highest success potential lies.</p>
                   </div>
                 </div>
               </div>
@@ -255,19 +255,14 @@
 
             <div class="flex justify-between items-start border-b border-border-dim pb-6">
               <div>
-<<<<<<< HEAD
-                <h3 class="text-2xl font-medium text-text-primary uppercase tracking-tight">The Mayfair Corner</h3>
-                <p class="text-text-secondary text-sm uppercase tracking-widest mt-1">Premium Restaurant Site — London</p>
-=======
                 <h3 class="text-2xl font-medium text-text-primary uppercase tracking-tight">Hunter Valley Mountain View</h3>
                 <p class="text-text-secondary text-sm uppercase tracking-widest mt-1">Premium Restaurant Site - Sydney</p>
->>>>>>> d477d8f (updated image and frontend)
               </div>
               <span class="text-sm font-medium border border-[rgba(181,118,42,0.28)] bg-white text-brand-primary px-3 py-1 rounded-full group-hover:bg-brand-primary group-hover:text-white transition-colors">LEASED</span>
             </div>
           </div>
 
-          <div class="group block space-y-6 mt-0 md:mt-24" data-animation-on-scroll>
+          <div class="group block space-y-6" data-animation-on-scroll>
             <div class="relative overflow-hidden aspect-[4/5] rounded-xl">
               <img src="https://images.pexels.com/photos/17064138/pexels-photo-17064138.jpeg?w=1200&h=1500&fit=crop" alt="Brick & Beam" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
               <div class="absolute inset-0 bg-[#1E1810] bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-700"></div>
@@ -322,9 +317,7 @@
           <div class="space-y-4">
             <h3 class="text-sm uppercase tracking-widest text-brand-secondary">Global Hubs</h3>
             <ul class="space-y-2 text-text-secondary">
-              <li>London — Mayfair</li>
-              <li>New York — Tribeca</li>
-              <li>Dubai — DIFC</li>
+              <li>Australia — Sydney</li>
             </ul>
           </div>
         </div>
@@ -369,6 +362,39 @@
         observer.observe(el);
       });
     });
+  </script>
+
+  <script>
+    (function() {
+      const NAV_ACTIVE = ['bg-brand-primary', 'text-white', 'font-bold', 'shadow-md'];
+      const NAV_INACTIVE = ['text-text-primary'];
+
+      function setActive(sectionId) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const isActive = link.dataset.section === sectionId;
+          NAV_ACTIVE.forEach(c => link.classList.toggle(c, isActive));
+          NAV_INACTIVE.forEach(c => link.classList.toggle(c, !isActive));
+        });
+      }
+
+      const sections = [
+        { id: 'overview',     el: document.body },
+        { id: 'intelligence', el: document.getElementById('intelligence') },
+        { id: 'curated',      el: document.getElementById('curated') },
+      ];
+
+      function onScroll() {
+        const mid = window.scrollY + window.innerHeight * 0.4;
+        let active = 'overview';
+        for (const s of sections) {
+          if (s.el && s.el.offsetTop <= mid) active = s.id;
+        }
+        setActive(active);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
   </script>
 
   <script src="https://api.landinghero.ai/public/assistant-widget.js" data-lh-assistant-widget="true" data-project-id="2BI5i0N1nANJ1J9lqiFp"></script>
